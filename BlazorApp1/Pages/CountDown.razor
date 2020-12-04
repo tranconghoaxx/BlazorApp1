@@ -1,0 +1,78 @@
+﻿
+@page "/countdown"
+
+<div class="container">
+    <div class="card" style="width: 21rem;">
+        <div class="card-body">
+            <h5 class="card-title">My CountDown</h5>
+            <p class="card-text hoa-inline">@TimeLeft.Minutes </p> Minute
+            <p class="card-text hoa-inline">@TimeLeft.Seconds  </p> Seconds
+
+            <div class="blazor-hoa-block">
+                <button class="btn btn-primary" @onclick="@(async () => {StopWatch();})">Start</button>
+                <button class="btn btn-primary" @onclick="@(() => { is_stopwatchrunning = false; })">Pause</button>
+                <button class="btn btn-primary" @onclick="@(() => { StopWatch(); })">Resume</button>
+                <button class="btn btn-primary" @onclick="@(() => { is_stopwatchrunning = false; TimeLeft = new TimeSpan(0,25,0); })">Stop</button>
+            </div>
+
+        </div>
+    </div>
+    <p>@displaytext</p>
+    <div class="message">
+        <div id="content">
+            <span class="emoji">🥳</span>
+            <span class="emoji">🎉</span>
+            <span class="emoji">🎂</span>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+@code {
+    // Stop watch value
+    bool is_stopwatchrunning = false;
+
+    TimeSpan TimeLeft = new TimeSpan(0, 25, 0);
+    string displaytext = "";
+
+    async Task StopWatch()
+    {
+        is_stopwatchrunning = true;
+        while (is_stopwatchrunning)
+        {
+            await Task.Delay(1000);
+            if (is_stopwatchrunning)
+            {
+                // TimeLeft = TimeLeft.Add(new TimeSpan(0, 0, 1));
+                TimeLeft = TimeLeft.Subtract(new TimeSpan(0, 0, 1));
+                StateHasChanged();
+            }
+        }
+    }
+
+
+    async Task Timer()
+    {
+        while (TimeLeft > new TimeSpan())
+        {
+            await Task.Delay(1000);
+            TimeLeft = TimeLeft.Subtract(new TimeSpan(0, 0, 1));
+            StateHasChanged();
+        }
+        await AfterTime();
+        StateHasChanged();
+    }
+
+
+    Task AfterTime()
+    {
+        displaytext = "Time expired";
+        return Task.CompletedTask;
+    }
+
+
+
+}
